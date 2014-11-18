@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AngularJS 1.2 vs 1.3 - Michał Miszczyszyn</title>
+        <link rel="stylesheet" href="../normalize.css">
+        <link rel="stylesheet" href="../foundation.css">
+        <link rel="stylesheet" href="../style.css">
+        <script src="angular-1.2.26.js"></script>
+        <script src="app.js"></script>
+        <script src="../phoneFormat.js"></script>
+    </head>
+    <body>
+    <div class="row">
+        <div class="large-12 columns">
+            <h1>Angular 1.2</h1>
+            <hr/>
+
+            <section>
+                <h2>Forms validation</h2>
+                <section>
+                    <h3>ngMessages</h3>
+                    <form name="myForm1">
+                        <label>
+                            Show error on blur even if nothing was entered to the input:
+                            <input name="test1" ng-model="test1" required ng-blur="test1InputBlurred = true">
+                        </label>
+                        <div class="label alert" ng-if="test1InputBlurred && myForm1.test1.$error.required">Enter something!</div>
+                    </form>
+
+                    <form name="myForm2" novalidate ng-submit="myForm2Submitted = true">
+                        <label>
+                            Show error when the form is submitted:
+                            <input name="test2" ng-model="test2" required>
+                        </label>
+                        <button type="submit" class="tiny">Submit</button>
+                        <div class="label alert" ng-if="myForm2Submitted && myForm2.test2.$error.required">Enter something!</div>
+                    </form>
+
+                    <form name="myForm3" novalidate>
+                        <h3 style="color: red;">Probably impossible</h3>
+                        <label>
+                            Show all errors
+                            <input type="email" name="test3" ng-model="test3" ng-minlength="6" ng-maxlength="7" ng-required="true">
+                        </label>
+                        <div ng-if="myForm3.test3.$dirty">
+                            <div class="label alert" ng-if="myForm3.test3.$error.email">Email</div>
+                            <div class="label alert" ng-if="myForm3.test3.$error.required">Required</div>
+                            <div class="label alert" ng-if="myForm3.test3.$error.minlength">Minlength</div>
+                            <div class="label alert" ng-if="myForm3.test3.$error.maxlength">Maxlength</div>
+                            <div class="label alert" ng-if="myForm3.test3.$error.pattern">Pattern</div>
+                        </div>
+                        <button type="submit" class="tiny">Submit</button>
+                    </form>
+
+                    <form name="myForm4" novalidate>
+                        <label>
+                            Show only one of many errors at once:
+                            <input name="test4" ng-model="test4" ng-minlength="6" ng-required="true" ng-pattern="/^\d+$/">
+                        </label>
+                        <div ng-if="myForm4.test4.$dirty">
+                            <div class="label alert" ng-if="myForm4.test4.$error.required">Required</div>
+                            <div class="label alert" ng-if="myForm4.test4.$error.minlength">Minlength</div>
+                            <div class="label alert" ng-if="myForm4.test4.$error.pattern">Pattern</div>
+                        </div>
+                        <button type="submit" class="tiny">Submit</button>
+                    </form>
+                </section>
+                <section>
+                    <h3>Custom async validator directive</h3>
+                    <form name="myForm5" novalidate>
+                        <label>
+                            Async validation (4 seconds):
+                            <input name="test5" ng-model="test5" custom-async-validator required>
+                        </label>
+                        <div class="label warning" ng-if="myForm5.test5.$pending">Async validation in progress…</div>
+                        <div>
+                            <div class="label alert" ng-if="myForm5.test5.$error.customAsyncValidator">Async validator failed!</div>
+                        </div>
+                        <button type="submit" class="tiny">Submit</button>
+                    </form>
+                </section>
+            </section>
+            <section ng-controller="OptionsCtrl">
+                <h2>ngModelOptions</h2>
+                <section>
+                    <h3>Trigger model change only on blur</h3>
+                    <input ng-model="modelValue1" ng-blur="finalModelValue1 = modelValue1">
+                    <span class="label">Value:</span>
+                    {{finalModelValue1}}
+                </section>
+                <section>
+                    <h3>Trigger model change on blur or 1 second after the last keystroke</h3>
+                    <input ng-model="modelValue2" ng-blur="onBlur()">
+                    <span class="label">Value:</span>
+                    {{finalModelValue2}}
+                </section>
+                <section ng-form="myForm6">
+                    <h3>Allow invalid values in the model</h3>
+                    <input ng-model="modelValue3" name="modelValue3" required ng-pattern="/^\d+$/">
+                    <span class="label">Value:</span>
+                    {{myForm6.modelValue3.$viewValue}} <div class="label alert" ng-if="myForm6.modelValue3.$invalid">Invalid!</div>
+                </section>
+                <section ng-init="x = []">
+                    <h2>Truthy-ness test</h2>
+                    <label>Enter any text to see if it's truthy<input ng-model="isTruthy"></label>
+                    <span ng-if="isTruthy">This is truthy</span><br>
+                    <span ng-if="x">Empty array is truthy</span>
+                </section>
+            </section>
+        </div>
+    </div>
+    </body>
+</html>
